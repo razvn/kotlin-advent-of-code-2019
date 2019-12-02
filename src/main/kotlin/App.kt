@@ -9,7 +9,6 @@ fun main() {
     println(App().greeting)
     println("~".repeat(App().greeting.length))
 
-    val day01 = Day01()
     val day01InputData = listOf<Long>(
             62259,75368,93740,119724,112546,137714,96999,130673,102398,73819,100734,85337,62764,82115,127696,54391,
             103213,77954,112513,112392,138404,92989,108521,83163,109720,91918,114443,54306,90623,66833,58505,85919,
@@ -20,15 +19,11 @@ fun main() {
             72584,59000,63151,114253
     )
 
-    val day01ResultPartOne = day01.getPartOneFuel(day01InputData)
-    println("Day 1 : Result part one is: $day01ResultPartOne")
+    val day01 = Day01(day01InputData, "Day 1 : ")
+    day01.printResutPartOne()
+    day01.printResutPartTwo()
 
-    val day01ResultPartTwo = day01.getPartTwoFuel(day01InputData)
-    println("Day 2 : Result part two is: $day01ResultPartTwo")
-
-    println("=".repeat(200))
-
-    val day02 = Day02()
+    println("=".repeat(100))
 
     val day02InputData = listOf(
             1, 0, 0, 3,
@@ -67,15 +62,11 @@ fun main() {
             99, 2, 0, 14, 0
     )
 
-    val day02OriginalProgram = day02InputData.toMutableList()
-    day02OriginalProgram[1] = 12
-    day02OriginalProgram[2] = 2
+    val day02 = Day02(day02InputData, "Day 2 : ")
+    day02.printResutPartOne()
+    day02.printResutPartTwo()
 
-    val resultDay2PartOne = day02.analyzeCommand(day02OriginalProgram)
+    println("=".repeat(100))
 
-    println()
-    println("Day 2 : Result part one is: $resultDay2PartOne")
 
-    val (noun, verbe) = day02.findNounAndVerbeForOutput(19690720, day02InputData)
-    println("Day 2 : Result part two is: ${100 * noun + verbe}")
 }

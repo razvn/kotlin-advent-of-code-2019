@@ -4,7 +4,7 @@ import io.kotlintest.specs.StringSpec
 import io.kotlintest.tables.row
 
 open class Day01Test : StringSpec({
-    val day01 = Day01()
+    val day01 = Day01(emptyList())
 
     "test values are validate part one" {
         forall(

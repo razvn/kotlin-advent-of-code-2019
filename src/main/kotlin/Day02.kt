@@ -1,5 +1,4 @@
 fun main() {
-    val service = Day02()
     val inputData = listOf(
             1, 0, 0, 3,
             1, 1, 2, 3,
@@ -37,61 +36,12 @@ fun main() {
             99, 2, 0, 14, 0
     )
 
-    val originalProgram = inputData.toMutableList()
-    originalProgram[1] = 12
-    originalProgram[2] = 2
-
-    val resultPartOne = service.analyzeCommand(originalProgram)
-    println()
-    println("Result part one is: $resultPartOne")
-
-    // part two
-
-    val (noun, verbe) = service.findNounAndVerbeForOutput(19690720, inputData)
-
-    println("Result part two is: ${100 * noun + verbe}")
+    val service = Day02(inputData)
+    service.printResutPartOne()
+    service.printResutPartTwo()
 }
 
-class Day02 {
-    enum class Operation {
-        ADD, MULTIPLY;
-    }
-
-    class HaltException : Exception()
-    class UnexpectedValueException : Exception()
-    class OutOfBoundsException : Exception()
-
-    private fun calcValue(opIndex: Int, data: List<Int>): Pair<Int, Int> {
-        return when (data[opIndex]) {
-            99 -> throw HaltException()
-            1 -> operateValues(Operation.ADD, opIndex, data)
-            2 -> operateValues(Operation.MULTIPLY, opIndex, data)
-            else -> throw UnexpectedValueException()
-        }
-    }
-
-    private fun operateValues(op: Operation, opIndex: Int, data: List<Int>): Pair<Int, Int> {
-        val val1Index = try {
-            data[opIndex + 1]
-        } catch (e: Exception) {
-            throw OutOfBoundsException()
-        }
-        val val2Index = try {
-            data[opIndex + 2]
-        } catch (e: Exception) {
-            throw OutOfBoundsException()
-        }
-        val resPosition = try {
-            data[opIndex + 3]
-        } catch (e: Exception) {
-            throw OutOfBoundsException()
-        }
-
-        return when (op) {
-            Operation.ADD -> resPosition to data[val1Index] + data[val2Index]
-            Operation.MULTIPLY -> resPosition to data[val1Index] * data[val2Index]
-        }
-    }
+class Day02(private val data: List<Int>, private val prefix: String = "") {
 
     fun analyzeCommand(command: List<Int>): List<Int> {
         val res = command.toMutableList()
@@ -133,6 +83,60 @@ class Day02 {
 
         return noun to verbe
     }
+
+    fun printResutPartOne() {
+        val originalProgram = data.toMutableList()
+        originalProgram[1] = 12
+        originalProgram[2] = 2
+
+        println("${prefix}Result part one is: ${analyzeCommand(originalProgram)}")
+    }
+
+    fun printResutPartTwo() {
+        val (noun, verbe) = findNounAndVerbeForOutput(19690720, data)
+
+        println("${prefix}Result part two is: ${100 * noun + verbe}")
+    }
+
+    private fun calcValue(opIndex: Int, data: List<Int>): Pair<Int, Int> {
+        return when (data[opIndex]) {
+            99 -> throw HaltException()
+            1 -> operateValues(Operation.ADD, opIndex, data)
+            2 -> operateValues(Operation.MULTIPLY, opIndex, data)
+            else -> throw UnexpectedValueException()
+        }
+    }
+
+    private fun operateValues(op: Operation, opIndex: Int, data: List<Int>): Pair<Int, Int> {
+        val val1Index = try {
+            data[opIndex + 1]
+        } catch (e: Exception) {
+            throw OutOfBoundsException()
+        }
+        val val2Index = try {
+            data[opIndex + 2]
+        } catch (e: Exception) {
+            throw OutOfBoundsException()
+        }
+        val resPosition = try {
+            data[opIndex + 3]
+        } catch (e: Exception) {
+            throw OutOfBoundsException()
+        }
+
+        return when (op) {
+            Operation.ADD -> resPosition to data[val1Index] + data[val2Index]
+            Operation.MULTIPLY -> resPosition to data[val1Index] * data[val2Index]
+        }
+    }
+
+    enum class Operation {
+        ADD, MULTIPLY;
+    }
+
+    class HaltException : Exception()
+    class UnexpectedValueException : Exception()
+    class OutOfBoundsException : Exception()
 }
 
 
