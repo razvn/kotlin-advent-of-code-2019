@@ -18,29 +18,14 @@ class Day03(private val data: List<String>, private val prefix: String = "") {
         val firstWirePoints = pointsFromPath(data.first().split(","))
         val secondWirePoints = pointsFromPath(data.last().split(","))
 
-        val intersection = firstWirePoints.keys.intersect(secondWirePoints.keys)
-        val distance = if (intersection.isNotEmpty()) {
-            intersection.map { pointToManhattanDistance(it) }.min() ?: throw Exception("Minimal distatnce not found")
-        } else {
-            throw Exception("No interesection found")
-        }
-
-        return distance
+        return shortestDistanceFromPoints(firstWirePoints.keys, secondWirePoints.keys)
     }
 
     fun partTwoMinimalIntersection(data: List<String>): Int {
         val firstWirePoints = pointsFromPath(data.first().split(","))
         val secondWirePoints = pointsFromPath(data.last().split(","))
 
-        val intersections = firstWirePoints.keys.intersect(secondWirePoints.keys)
-
-        val shortestIntersection = intersections.map {
-            val firstWireSteps = firstWirePoints[it] ?: throw Exception("Interesection point: $it not found in first wire path")
-            val secondWireSteps = secondWirePoints[it] ?: throw Exception("Interesection point: $it not found in second wire path")
-            firstWireSteps + secondWireSteps
-        }.min() ?: throw Exception("Minimal not found")
-
-        return shortestIntersection
+        return shortestIntersectionFromPoints(firstWirePoints, secondWirePoints)
     }
 
     fun printResutPartOne() {
@@ -60,51 +45,18 @@ class Day03(private val data: List<String>, private val prefix: String = "") {
         path.forEach {
             val (direction, steps) = decodeMovement(it)
 
-            when(direction) {
-                Direction.UP -> {
-                    repeat(steps) {
-                        y++
-                        stepsTillPoint++
-                        // don't add the central point
-                        if (x != 0 || y != 0) {
-                            val point = Point(x, y)
-                            val t = points.getOrDefault(point, stepsTillPoint)
-                            points[point] = min(t, stepsTillPoint)
-                        }
-                    }
+            repeat(steps) {
+                when(direction) {
+                    Direction.UP -> y++
+                    Direction.DOWN -> y--
+                    Direction.LEFT -> x--
+                    Direction.RIGHT -> x++
                 }
-                Direction.DOWN -> {
-                    repeat(steps) {
-                        y--
-                        stepsTillPoint++
-                        if (x != 0 || y != 0) {
-                            val point = Point(x, y)
-                            val t = points.getOrDefault(point, stepsTillPoint)
-                            points[point] = min(t, stepsTillPoint)
-                        }
-                    }
-                }
-                Direction.LEFT -> {
-                    repeat(steps) {
-                        x--
-                        stepsTillPoint++
-                        if (x != 0 || y != 0) {
-                            val point = Point(x, y)
-                            val t = points.getOrDefault(point, stepsTillPoint)
-                            points[point] = min(t, stepsTillPoint)
-                        }
-                    }
-                }
-                Direction.RIGHT -> {
-                    repeat(steps) {
-                        x++
-                        stepsTillPoint++
-                        if (x != 0 || y != 0) {
-                            val point = Point(x, y)
-                            val t = points.getOrDefault(point, stepsTillPoint)
-                            points[point] = min(t, stepsTillPoint)
-                        }
-                    }
+                stepsTillPoint++
+                if (x != 0 || y != 0) {
+                    val point = Point(x, y)
+                    val t = points.getOrDefault(point, stepsTillPoint)
+                    points[point] = min(t, stepsTillPoint)
                 }
             }
         }
@@ -113,6 +65,28 @@ class Day03(private val data: List<String>, private val prefix: String = "") {
     }
 
     fun pointToManhattanDistance(point: Point): Int = abs(point.x) + abs(point.y)
+
+    fun shortestDistanceFromPoints(firstWire: Set<Point>, secondWire: Set<Point>): Int {
+        val intersection = firstWire.intersect(secondWire)
+        val distance = if (intersection.isNotEmpty()) {
+            intersection.map { pointToManhattanDistance(it) }.min() ?: throw Exception("Minimal distatnce not found")
+        } else {
+            throw Exception("No interesection found")
+        }
+        return distance
+    }
+
+    fun shortestIntersectionFromPoints(firstWire: Map<Point, Int>, secondWire: Map<Point, Int>): Int {
+        val intersection = firstWire.keys.intersect(secondWire.keys)
+
+        val shortestIntersection = intersection.map {
+            val firstWireSteps = firstWire[it] ?: throw Exception("Interesection point: $it not found in first wire path")
+            val secondWireSteps = secondWire[it] ?: throw Exception("Interesection point: $it not found in second wire path")
+            firstWireSteps + secondWireSteps
+        }.min() ?: throw Exception("Minimal not found")
+
+        return shortestIntersection
+    }
 
     private fun decodeMovement(code: String): Pair<Direction, Int> {
         val direction = when (code.first()) {
