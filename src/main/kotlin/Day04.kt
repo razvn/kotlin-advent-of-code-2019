@@ -1,9 +1,13 @@
+import kotlin.system.measureTimeMillis
+
 fun main() {
     val inputData = 152085 to 670283
     val service = Day04(inputData)
-
-    service.printResutPartOne()
-    service.printResutPartTwo()
+    val duration = measureTimeMillis {
+        service.printResutPartOne()
+        service.printResutPartTwo()
+    }
+    println("Duration: $duration ms")
 }
 
 class Day04(private val data: Pair<Int, Int>, private val prefix: String = "") {

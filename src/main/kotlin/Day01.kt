@@ -1,5 +1,6 @@
 import kotlin.math.floor
 import kotlin.math.max
+import kotlin.system.measureTimeMillis
 
 fun main() {
     val inputData = listOf<Long>(
@@ -13,8 +14,11 @@ fun main() {
     )
 
     val service = Day01(inputData)
-    service.printResutPartOne()
-    service.printResutPartTwo()
+    val duration = measureTimeMillis {
+        service.printResutPartOne()
+        service.printResutPartTwo()
+    }
+    println("Duration: $duration ms")
 }
 
 class Day01(private val data: List<Long>, private val prefix: String = "") {

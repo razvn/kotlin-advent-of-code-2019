@@ -1,3 +1,5 @@
+import kotlin.system.measureTimeMillis
+
 fun main() {
     val inputData = listOf(
             1, 0, 0, 3,
@@ -37,8 +39,11 @@ fun main() {
     )
 
     val service = Day02(inputData)
-    service.printResutPartOne()
-    service.printResutPartTwo()
+    val duration = measureTimeMillis {
+        service.printResutPartOne()
+        service.printResutPartTwo()
+    }
+    println("Duration: $duration ms")
 }
 
 class Day02(private val data: List<Int>, private val prefix: String = "") {
