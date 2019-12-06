@@ -1,17 +1,9 @@
-import kotlin.math.floor
+import java.io.File
 import kotlin.math.max
 import kotlin.system.measureTimeMillis
 
 fun main() {
-    val inputData = listOf<Long>(
-            62259, 75368, 93740, 119724, 112546, 137714, 96999, 130673, 102398, 73819, 100734, 85337, 62764, 82115, 127696, 54391,
-            103213, 77954, 112513, 112392, 138404, 92989, 108521, 83163, 109720, 91918, 114443, 54306, 90623, 66833, 58505, 85919,
-            77539, 149419, 128385, 66452, 94677, 109179, 62072, 137245, 136226, 145783, 60689, 103320, 145931, 101286, 63458, 122468,
-            87858, 105675, 146185, 57417, 96883, 70739, 97494, 140951, 149416, 83137, 66122, 134319, 58511, 139600, 102929, 112240,
-            149634, 64142, 83332, 129526, 99058, 148889, 50087, 74961, 133606, 143518, 68849, 97045, 73920, 61357, 115941, 56740,
-            111773, 77880, 90792, 77103, 111355, 125898, 56547, 84918, 113822, 74113, 98557, 80928, 60519, 146379, 59354, 102490,
-            72584, 59000, 63151, 114253
-    )
+    val inputData = Day01.inputDataFromFile("day01.txt")
 
     val service = Day01(inputData)
     val duration = measureTimeMillis {
@@ -21,19 +13,19 @@ fun main() {
     println("Duration: $duration ms")
 }
 
-class Day01(private val data: List<Long>, private val prefix: String = "") {
+class Day01(private val data: List<Int>, private val prefix: String = "") {
 
-    fun getFuel(mass: Long) = max((floor(mass.toDouble() / 3) - 2), 0.0).toLong()
+    fun getFuel(mass: Int) = max((mass / 3) - 2, 0)
 
-    tailrec fun getTotalModuleFuel(mass: Long, accum: Long = 0): Long {
+    tailrec fun getTotalModuleFuel(mass: Int, accum: Int = 0): Int {
         val newMass = getFuel(mass)
         val currentMass = accum + newMass
-        return if (newMass == 0L) currentMass else getTotalModuleFuel(newMass, currentMass)
+        return if (newMass == 0) currentMass else getTotalModuleFuel(newMass, currentMass)
     }
 
-    fun getPartOneFuel(masses: List<Long>) = masses.map { getFuel(it) }.sum()
+    fun getPartOneFuel(masses: List<Int>) = masses.map { getFuel(it) }.sum()
 
-    fun getPartTwoFuel(masses: List<Long>) = masses
+    fun getPartTwoFuel(masses: List<Int>) = masses
             .map { getTotalModuleFuel(it) }
             .sum()
 
@@ -43,6 +35,21 @@ class Day01(private val data: List<Long>, private val prefix: String = "") {
 
     fun printResutPartTwo() {
         println("${prefix}Result part two is: ${getPartTwoFuel(data)}")
+    }
+
+    companion object {
+        val fileDir = "src/main/resources/"
+
+        fun inputDataFromFile(fileName: String): List<Int> = loadDataFromFile(fileName)
+                .map { it.toInt() }
+
+        private fun loadDataFromFile(fileName: String): List<String> {
+            val inputData: MutableList<String> = mutableListOf()
+            File(fileDir + fileName).forEachLine {
+                inputData.add(it)
+            }
+            return inputData.toList()
+        }
     }
 }
 
