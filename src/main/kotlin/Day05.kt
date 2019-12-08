@@ -25,7 +25,9 @@ class Day05(private val data: List<Int>, private var input: List<Int>, private v
             if (instruction.operation == OUTPUT) {
                 output.add(instruction.result.value)
             }
-
+            if (instruction.operation == INPUT) {
+                inputReadIndex++
+            }
             if (debug) println(":$instructionPointer:$instruction")
 
             if (instruction.operation == HALT) {
