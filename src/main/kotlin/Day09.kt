@@ -108,8 +108,7 @@ class InitCodeComputerDay09(private val program: List<Long>) {
                         resultPosition?.let {
                             if (resultPosition >= internalProgram.size) {
                                 // uprise the program memory
-                                // (internalProgram.size..resultPosition).forEach { internalProgram.add(it.toInt(), 0) }
-                                (internalProgram.size..10000).forEach { internalProgram.add(it.toInt(), 0) }
+                                (internalProgram.size..resultPosition).forEach { internalProgram.add(it.toInt(), 0) }
                             }
                             internalProgram[resultPosition.toInt()] = value
                             // println("$instructionPointer: Update value: @${resultPosition.toInt()} = $value")
@@ -283,7 +282,7 @@ class InitCodeComputerDay09(private val program: List<Long>) {
     ) {
         fun debug(pointer: String, base: String): DebugInfos {
             return DebugInfos(pointer, base, code.toString(), operationType.toString(), param1?.debug()
-                    ?: "null", param2?.debug() ?: "null", result.debug(), positionAfter.debug())
+                    ?: "-", param2?.debug() ?: "-", result.debug(), positionAfter.debug())
         }
     }
 
@@ -294,7 +293,7 @@ class InitCodeComputerDay09(private val program: List<Long>) {
         fun debug(): String {
             val prefix = when (mode) {
                 ParamMode.MEMORY -> "$"
-                ParamMode.IMMEDIATE -> ""
+                ParamMode.IMMEDIATE -> "="
                 ParamMode.RELATIVE -> "+$"
             }
             return "$prefix$initial ($final)"
@@ -303,7 +302,7 @@ class InitCodeComputerDay09(private val program: List<Long>) {
 
     data class Result(val value: Long, val position: Position) {
         fun debug(): String {
-            return "$value (${position.debug()})"
+            return "${position.debug()} ${if (position.type != PositionType.NONE) "($value)" else ""}"
         }
     }
 
@@ -315,7 +314,7 @@ class InitCodeComputerDay09(private val program: List<Long>) {
                 PositionType.EXACT -> "="
                 PositionType.NONE -> "-"
             }
-            return "$prefix$value"
+            return "$prefix${if(type!=PositionType.NONE) value else ""}"
         }
     }
 
