@@ -70,5 +70,32 @@ fun main() {
 
     println("Duration Day 6 : $durationDay6 ms")
     println("=".repeat(100))
+
+    val durationDay7 = measureTimeMillis {
+        println("Day 7 : Coming soon")
+    }
+    println("Duration Day 7 : $durationDay7 ms")
+    println("=".repeat(100))
+
+    val day08InputData = Day08.inputDataFromFile("day08.txt")
+    val day08 = Day08(day08InputData, 25, 6,"Day 8 : ")
+    val durationDay8 = measureTimeMillis {
+        day08.printResutPartOne()
+        day08.printResutPartTwo()
+    }
+
+    println("Duration Day 8 : $durationDay8 ms")
+    println("=".repeat(100))
+
+
+    val day09InputData = Day09.inputDataFromFile("day09.txt")
+    val day09 = Day09(day09InputData,"Day 9 : ")
+    val durationDay9 = measureTimeMillis {
+        day09.printResutPartOne()
+        day09.printResutPartTwo()
+    }
+
+    println("Duration Day 9 : $durationDay9 ms")
+    println("=".repeat(100))
 }
 

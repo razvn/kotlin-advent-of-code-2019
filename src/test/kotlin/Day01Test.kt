@@ -13,12 +13,12 @@ open class Day01Test : StringSpec({
                 row(1969, 654),
                 row(100756, 33583)
         ) { mass, fuel ->
-            day01.getFuel(mass.toLong()) shouldBe fuel.toLong()
+            day01.getFuel(mass) shouldBe fuel.toLong()
         }
     }
 
     "test total fuel part one" {
-        val input = listOf<Long>(12, 14, 1969, 100756)
+        val input = listOf(12, 14, 1969, 100756)
         val result = 2 + 2 + 654 + 33583
         day01.getPartOneFuel(input) shouldBe result.toLong()
     }
@@ -30,12 +30,12 @@ open class Day01Test : StringSpec({
                 row(1969,966),
                 row(100756,50346)
         ) { mass, fuel ->
-            day01.getTotalModuleFuel(mass.toLong()) shouldBe fuel.toLong()
+            day01.getTotalModuleFuel(mass) shouldBe fuel.toLong()
         }
     }
 
     "test total fuel part two" {
-        val input = listOf<Long>(12, 14, 1969, 100756)
+        val input = listOf(12, 14, 1969, 100756)
         val result = 2 + 2 + 966 + 50346
         day01.getPartTwoFuel(input) shouldBe result.toLong()
     }

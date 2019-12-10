@@ -1,11 +1,15 @@
 import java.io.File
+import kotlin.system.measureTimeMillis
 
 fun main() {
     val inputData = Day06.inputDataFromFile("day06.txt")
     val service = Day06(inputData)
 
-    service.printResutPartOne()
-    service.printResutPartTwo()
+    val duration = measureTimeMillis {
+        service.printResutPartOne()
+        service.printResutPartTwo()
+    }
+    println("Duration: $duration ms")
 }
 
 class Day06(data: List<String>, private val prefix: String = "") {
