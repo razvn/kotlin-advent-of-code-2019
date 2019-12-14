@@ -1,42 +1,184 @@
-import InitCodeComputerDay09.OperationType.*
+import Day13.TileType.*
+import InitCodeComputerDay13.OperationType.*
 import java.io.File
+import kotlin.math.sign
 import kotlin.system.measureTimeMillis
 
 fun main() {
-    val inputData = Day09.inputDataFromFile("day09.txt")
-    val service = Day09(inputData)
-
+    val inputData = Day13.inputDataFromFile("day13.txt")
+    val service = Day13(inputData, true)
     val duration = measureTimeMillis {
-        service.printResultPartOne()
-        service.printResultPartTwo()
+        service.printResults()
     }
     println("Duration: $duration ms")
 }
 
-class Day09(private val data: List<Long>, private val prefix: String = "") {
+class Day13(private val data: List<Long>, private val printPlayground: Boolean = false, private val prefix: String = "") {
 
     fun partOne(data: List<Long>): String {
-        val computerDay09 = InitCodeComputerDay09(data)
-        val inputQueue = InitCodeComputerDay09.AdventQueue<Long>()
-        inputQueue.addAll(listOf(1L))
-        val result = computerDay09.runProgram(inputQueue, debug = false)
-        return result.output.toString()
+        val computer = InitCodeComputerDay13(data)
+        val inputQueue = InitCodeComputerDay13.AdventQueue<Long>()
+        // inputQueue.addAll(listOf(1L))
+        val result = computer.runProgram(inputQueue, debug = false)
+        var score: Int = 0
+        val game = result.output.chunked(3).mapNotNull {
+            val x = it[0].toInt()
+            val y = it[1].toInt()
+            val z = it[2].toInt()
+
+            if (x == -1 && y == 0) {
+                score = z
+                null
+            } else {
+                Tile(x, y, TileType.fromCode(z))
+            }
+        }.toSet()
+
+        val nbBlockTiles = game.count { it.id == BLOCK }
+
+        if (printPlayground) {
+            printGame(game)
+            printScore(score, 0, game)
+        }
+        //game.forEach { println(it) }
+        return nbBlockTiles.toString()
     }
 
     fun partTwo(data: List<Long>): String {
-        val computerDay09 = InitCodeComputerDay09(data)
-        val inputQueue = InitCodeComputerDay09.AdventQueue<Long>()
-        inputQueue.addAll(listOf(2L))
-        val result = computerDay09.runProgram(inputQueue)
-        return result.output.toString()
+        val newData = data.toMutableList().also { it[0] = 2 }.toList()
+        val score = playGame(newData)
+        return score.toString()
     }
 
-    fun printResultPartOne() {
-        println("${prefix}Result part one is: ${partOne(data)}")
+    fun printResutPartOne(): String {
+        return "${prefix}Result part one is: ${partOne(data)}"
     }
 
-    fun printResultPartTwo() {
-        println("${prefix}Result part two is: ${partTwo(data)}")
+    fun printResutPartTwo(): String {
+        return "${prefix}Result part two is: ${partTwo(data)}"
+    }
+
+    fun printResults() {
+        val p1 = printResutPartOne()
+        val p2 = printResutPartTwo()
+
+        println(p1)
+        println(p2)
+    }
+
+    private fun playGame(gameProgram: List<Long>): Int {
+        val gameData: MutableSet<Tile> = mutableSetOf()
+        val computer = InitCodeComputerDay13(gameProgram)
+        val inputQueue = InitCodeComputerDay13.AdventQueue<Long>()
+        var score = 0
+
+        while (true) {
+            val result = computer.runProgram(inputQueue, resetProgram = false, debug = false)
+
+            val game = result.output.chunked(3).mapNotNull {
+                val x = it[0].toInt()
+                val y = it[1].toInt()
+                val z = it[2].toInt()
+
+                if (x == -1 && y == 0) {
+                    score = z
+                    null
+                } else {
+                    val tile = Tile(x, y, TileType.fromCode(z))
+                    tile
+                }
+
+            }.toSet()
+
+            var paddleDirection = 0
+            if (result.pause) {
+                // get ball position
+                val ball = game.firstOrNull { it.id == BALL }
+                val oldBall = gameData.firstOrNull { it.id == BALL }
+                val paddle = game.firstOrNull { it.id == PADDLE }
+                val oldPaddle = gameData.firstOrNull { it.id == PADDLE }
+
+                ball?.let { b ->
+                    // gameData.filter { it.id == BALL }.map { it.id = OLD_BALL }
+                    gameData.filter { it.id == BALL }.forEach { gameData.remove(it) }
+                }
+                if (paddle != null) {
+                    // gameData.filter { it.id == PADDLE }.map { it.id = OLD_PADDLE }
+                    gameData.filter { it.id == PADDLE }.forEach { gameData.remove(it) }
+                }
+
+                val b = ball ?: oldBall
+                val p = paddle ?: oldPaddle
+                if (b != null && p != null && oldBall != null) {
+                    val ballInpactPosition = (b.x - oldBall.x) * (p.y - b.y) + b.x - 1
+                    paddleDirection = (ballInpactPosition - p.x).sign
+                    // println("Old ball: ${oldBall.x}, oldPaddle: ${oldPaddle?.x}, ball: ${ball?.x}, paddle: ${paddle?.x}, inpact: $ballInpactPosition, direction: $paddleDirection")
+                }
+
+                // add new data to game
+                game.forEach { gameData.add(it) }
+                inputQueue.add(paddleDirection.toLong())
+            }
+
+            if (printPlayground) {
+                printGame(gameData)
+                printScore(score, paddleDirection, gameData)
+            }
+
+            if (!result.pause) {
+                break
+            }
+        }
+        return score
+    }
+
+    fun printGame(game: Set<Tile>) {
+        val maxX = game.maxBy { it.x }?.x ?: 0
+        val maxY = game.maxBy { it.y }?.y ?: 0
+
+        var playground = arrayOf<Array<String>>()
+        (0..maxY).forEach {
+            var array = arrayOf<String>()
+            (0..maxX).forEach { array += " " }
+            playground += array
+        }
+        //clear console
+        Runtime.getRuntime().exec("pwd")
+        //System.out.print("\033\143")
+        game.forEach {
+            try {
+                playground[it.y][it.x] = when (it.id) {
+                    EMPTY -> " "
+                    WALL -> "█"
+                    BLOCK -> "▒"
+                    PADDLE -> "═"
+                    OLD_PADDLE -> "-"
+                    BALL -> "°"
+                    OLD_BALL -> "."
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
+        playground.forEach {
+            println(it.joinToString(""))
+        }
+
+        println()
+    }
+
+    fun printScore(score: Int, paddleDirection: Int, gameData: Set<Tile>) {
+        val blockTitles = gameData.filter { it.id == BLOCK }.toMutableList()
+        gameData.filter { it.id == EMPTY }.forEach { e ->
+            val block = blockTitles.firstOrNull { e.x == it.x && e.y == it.y }
+            block?.let {
+                blockTitles.remove(block)
+            }
+        }
+
+        val nbBlockTiles = blockTitles.count() // gameData.count { it.id == BLOCK }
+        println("= Score: $score (blocks: $nbBlockTiles - joystick: $paddleDirection) =")
     }
 
     companion object {
@@ -54,10 +196,20 @@ class Day09(private val data: List<Long>, private val prefix: String = "") {
             return inputData.toList()
         }
     }
+
+    data class Tile(val x: Int, val y: Int, var id: TileType)
+
+    enum class TileType(val value: Int) {
+        EMPTY(0), WALL(1), BLOCK(2), PADDLE(3), BALL(4), OLD_PADDLE(33), OLD_BALL(44);
+
+        companion object {
+            fun fromCode(code: Int) = values().firstOrNull { it.value == code }
+                    ?: throw Exception("Tile id: $code unsupported")
+        }
+    }
 }
 
-
-class InitCodeComputerDay09(private val program: List<Long>) {
+class InitCodeComputerDay13(private val program: List<Long>) {
     private val internalProgram: MutableList<Long> = mutableListOf()
     private val output = mutableListOf<Long>()
     var instructionPointer = 0L
@@ -72,6 +224,10 @@ class InitCodeComputerDay09(private val program: List<Long>) {
         val debugHistory = mutableListOf<DebugInfos>()
         if (debug) {
             println("Start with input: $input - program: $program")
+        }
+        if (state == State.PAUSE) {
+            state = State.RUNNING
+            output.clear()
         }
 
         while (state == State.RUNNING) {
@@ -161,9 +317,8 @@ class InitCodeComputerDay09(private val program: List<Long>) {
                     val positionAfter = Position(PositionType.RELATIVE, 2)
                     Instruction(operation.code, operation.type, param1, null, ip, result, positionAfter)
                 } else {
-                    throw PauseException()
+                    throw Exception("Input value null")
                 }
-
             }
             OUTPUT -> { // 4
                 val param1 = getParam(ip, res, 1, operation, base)
@@ -249,9 +404,6 @@ class InitCodeComputerDay09(private val program: List<Long>) {
         "${" ".repeat(len - this.length)}$this"
     } else this
 
-    class HaltException : Exception()
-    class PauseException : Exception()
-
     private fun getParam(pos: Long, data: List<Long>, paramNb: Long, operation: Operation, base: Long): Parameter {
         val position = getPosition(pos, data, paramNb, operation, base)
         val value = data.getOrElse(position.toInt()) { 0 }
@@ -314,7 +466,7 @@ class InitCodeComputerDay09(private val program: List<Long>) {
                 PositionType.EXACT -> "="
                 PositionType.NONE -> "-"
             }
-            return "$prefix${if(type!=PositionType.NONE) value else ""}"
+            return "$prefix${if (type != PositionType.NONE) value else ""}"
         }
     }
 
@@ -361,7 +513,7 @@ class InitCodeComputerDay09(private val program: List<Long>) {
         fun peek(): T? {
             return if (items.isNotEmpty()) {
                 val element = items.first()
-                items.drop(0)
+                items.removeAt(0)
                 element
             } else null
         }
@@ -372,6 +524,5 @@ class InitCodeComputerDay09(private val program: List<Long>) {
 
         fun add(element: T): Boolean = items.add(element)
     }
-
 }
 

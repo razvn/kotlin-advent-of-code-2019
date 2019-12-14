@@ -6,8 +6,8 @@ fun main() {
 
     val service = Day02(inputData)
     val duration = measureTimeMillis {
-        service.printResutPartOne()
-        service.printResutPartTwo()
+        service.printResultPartOne()
+        service.printResultPartTwo()
     }
     println("Duration: $duration ms")
 }
@@ -55,7 +55,7 @@ class Day02(private val data: List<Int>, private val prefix: String = "") {
         return noun to verbe
     }
 
-    fun printResutPartOne() {
+    fun printResultPartOne() {
         val originalProgram = data.toMutableList()
         originalProgram[1] = 12
         originalProgram[2] = 2
@@ -63,7 +63,7 @@ class Day02(private val data: List<Int>, private val prefix: String = "") {
         println("${prefix}Result part one is: ${analyzeCommand(originalProgram)}")
     }
 
-    fun printResutPartTwo() {
+    fun printResultPartTwo() {
         val (noun, verbe) = findNounAndVerbeForOutput(19690720, data)
 
         println("${prefix}Result part two is: ${100 * noun + verbe}")

@@ -8,8 +8,8 @@ fun main() {
     val inputValues = listOf(1, 5)
     val service = Day05(inputData, inputValues)
     val duration = measureTimeMillis {
-        service.printResutPartOne()
-        service.printResutPartTwo()
+        service.printResultPartOne()
+        service.printResultPartTwo()
     }
     println("Duration: $duration ms")
 }
@@ -127,12 +127,12 @@ class Day05(private val data: List<Int>, private var input: List<Int>, private v
     }
 
 
-    fun printResutPartOne() {
+    fun printResultPartOne() {
         val originalProgram = data.toMutableList()
         println("${prefix}Result part one is: ${analyzeProgram(originalProgram, listOf(input.first()), false).output}")
     }
 
-    fun printResutPartTwo() {
+    fun printResultPartTwo() {
         val originalProgram = data.toMutableList()
         println("${prefix}Result part two is: ${analyzeProgram(originalProgram, listOf(input.last()), false).output}")
     }

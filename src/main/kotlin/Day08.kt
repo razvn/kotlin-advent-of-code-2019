@@ -6,13 +6,13 @@ fun main() {
     val service = Day08(inputData, 25, 6)
 
     val duration = measureTimeMillis {
-        service.printResutPartOne()
-        service.printResutPartTwo()
+        service.printResultPartOne()
+        service.printResultPartTwo()
     }
     println("Duration: $duration ms")
 }
 
-class Day08(private val data: String, val wide: Int, val tall: Int, private val prefix: String = "") {
+class Day08(private val data: String, private val wide: Int, private val tall: Int, private val prefix: String = "") {
 
     fun partOne(data: String): Int {
         val layers: Map<String, Int> = data.chunked(wide * tall).map {
@@ -52,11 +52,11 @@ class Day08(private val data: String, val wide: Int, val tall: Int, private val 
         return resp
     }
 
-    fun printResutPartOne() {
+    fun printResultPartOne() {
         println("${prefix}Result part one is: ${partOne(data)}")
     }
 
-    fun printResutPartTwo() {
+    fun printResultPartTwo() {
         println("${prefix}Result part two is: ${partTwo(data)}")
     }
 

@@ -7,8 +7,8 @@ fun main() {
 
     val service = Day01(inputData)
     val duration = measureTimeMillis {
-        service.printResutPartOne()
-        service.printResutPartTwo()
+        service.printResultPartOne()
+        service.printResultPartTwo()
     }
     println("Duration: $duration ms")
 }
@@ -29,11 +29,11 @@ class Day01(private val data: List<Int>, private val prefix: String = "") {
             .map { getTotalModuleFuel(it) }
             .sum()
 
-    fun printResutPartOne() {
+    fun printResultPartOne() {
         println("${prefix}Result part one is: ${getPartOneFuel(data)}")
     }
 
-    fun printResutPartTwo() {
+    fun printResultPartTwo() {
         println("${prefix}Result part two is: ${getPartTwoFuel(data)}")
     }
 

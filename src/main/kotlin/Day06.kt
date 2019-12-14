@@ -6,8 +6,8 @@ fun main() {
     val service = Day06(inputData)
 
     val duration = measureTimeMillis {
-        service.printResutPartOne()
-        service.printResutPartTwo()
+        service.printResultPartOne()
+        service.printResultPartTwo()
     }
     println("Duration: $duration ms")
 }
@@ -47,11 +47,11 @@ class Day06(data: List<String>, private val prefix: String = "") {
         return nb
     }
 
-    fun printResutPartOne() {
+    fun printResultPartOne() {
         println("${prefix}Result part one is: ${partOne()}")
     }
 
-    fun printResutPartTwo() {
+    fun printResultPartTwo() {
         println("${prefix}Result part two is: ${partTwo("YOU", "SAN")}")
     }
 

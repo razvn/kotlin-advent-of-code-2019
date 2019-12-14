@@ -4,8 +4,8 @@ fun main() {
     val inputData = 152085 to 670283
     val service = Day04(inputData)
     val duration = measureTimeMillis {
-        service.printResutPartOne()
-        service.printResutPartTwo()
+        service.printResultPartOne()
+        service.printResultPartTwo()
     }
     println("Duration: $duration ms")
 }
@@ -28,11 +28,11 @@ class Day04(private val data: Pair<Int, Int>, private val prefix: String = "") {
         return possibilites.size
     }
 
-    fun printResutPartOne() {
+    fun printResultPartOne() {
         println("${prefix}Result part one is: ${partOne(data)}")
     }
 
-    fun printResutPartTwo() {
+    fun printResultPartTwo() {
         println("${prefix}Result part two is: ${partTwo(data)}")
     }
 

@@ -7,8 +7,8 @@ fun main() {
     val inputData = Day03.inputDataFromFile("day03.txt")
     val service = Day03(inputData)
     val duration = measureTimeMillis {
-        service.printResutPartOne()
-        service.printResutPartTwo()
+        service.printResultPartOne()
+        service.printResultPartTwo()
     }
     println("Duration: $duration ms")
 }
@@ -29,11 +29,11 @@ class Day03(private val data: List<String>, private val prefix: String = "") {
         return shortestIntersectionFromPoints(firstWirePoints, secondWirePoints)
     }
 
-    fun printResutPartOne() {
+    fun printResultPartOne() {
         println("${prefix}Result part one is: ${partOneMinimalDistance(data)}")
     }
 
-    fun printResutPartTwo() {
+    fun printResultPartTwo() {
         println("${prefix}Result part two is: ${partTwoMinimalIntersection(data)}")
     }
 
